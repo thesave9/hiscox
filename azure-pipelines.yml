@@ -3,8 +3,7 @@ trigger: 'none' # will disable CI builds entirely
 jobs:
 - job: Demo
   displayName: 'Build Web App'
-  pool:
-    name: windows-agent
+  pool: 'windows-agent'
     demands: java  
   variables:
     BuildConfiguration: release
