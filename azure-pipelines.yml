@@ -40,7 +40,6 @@ variables:
       projects: '**/*UnitTest*.csproj'
       arguments: '--configuration $(BuildConfiguration)'
 
-  steps:
   - task: NuGetToolInstaller@1
 
   - task: NuGetCommand@2
