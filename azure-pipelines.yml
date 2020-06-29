@@ -27,11 +27,19 @@ steps:
     projects: '**/Demo.csproj'
     feedsToUse: 'select'
 
+#- task: DotNetCoreCLI@2
+#  displayName: 'dotnet build'
+#  inputs:
+#    command: 'build'
+#    projects: '**/Demo.csproj'
+#    arguments: '--configuration $(BuildConfiguration)'
+ 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet build'
+  displayName: build
   inputs:
-    command: 'build'
-    projects: '**/Demo.csproj'
+    projects: |
+     **/Demo.csproj
+     **/*SeleniumUiTests.csproj
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
