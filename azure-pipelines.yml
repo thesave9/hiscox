@@ -55,3 +55,9 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'demo'
     publishLocation: 'Container'
+
+- task: MSBuild@1
+  displayName: 'Build project SeleniumUiTests.csproj'
+  inputs:
+    solution: SeleniumUiTests/SeleniumUiTests.csproj
+    msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
