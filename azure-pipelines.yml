@@ -21,35 +21,35 @@ variables:
 
 
 steps:
-  - task: DotNetCoreCLI@2
-    displayName: Restore
-    inputs:
-      command: restore
-      projects: '**/Demo.csproj'
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '**/Demo.csproj'
 
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: '**/Demo.csproj'
-      arguments: '--configuration $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: '**/Demo.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: test
-      projects: '**/*UnitTest*.csproj'
-      arguments: '--configuration $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: '**/*UnitTest*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 
-  - task: NuGetToolInstaller@1
+- task: NuGetToolInstaller@1
 
-  - task: NuGetCommand@2
-    inputs:
-      restoreSolution: '$(solution)'
+- task: NuGetCommand@2
+  inputs:
+  restoreSolution: '$(solution)'
 
-  - task: DotNetCoreCLI@2
-    displayName: Publish
-    inputs:
-      command: publish
-      publishWebProjects: True
-      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
-      zipAfterPublish: True
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
