@@ -31,7 +31,6 @@ variables:
     displayName: Build
     inputs:
       projects: '**/Demo.csproj'
-      projects: '!**/*SeleniumUiTests.csproj'
       arguments: '--configuration $(BuildConfiguration)'
 
   - task: DotNetCoreCLI@2
