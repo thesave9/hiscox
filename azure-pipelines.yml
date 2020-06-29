@@ -7,7 +7,7 @@
 trigger:
 - master
 
-pool: 'AWS'
+pool: 'aws'
 
 variables:
   solution: '**/*.sln'
