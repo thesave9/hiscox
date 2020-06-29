@@ -38,3 +38,11 @@ steps:
   inputs:
     testResultsFormat: 'XUnit'
     testResultsFiles: '**/test-library.csproj'
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*library.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
