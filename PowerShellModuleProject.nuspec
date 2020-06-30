@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>PowerShellModuleProject</id>
+        <version>$VERSIONHERE$</version>
+        <authors>Test</authors>
+        <description>module</description>
+    </metadata>
+</package>
