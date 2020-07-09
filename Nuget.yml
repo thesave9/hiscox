@@ -58,6 +58,21 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
 
 
+- task: PublishBuildArtifacts@1
+  displayName: 'Pipeline Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Demo'
+    publishLocation: 'Container'
+
+- task: DownloadBuildArtifacts@0
+  displayName: 'Drop Artifacts'
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'Demo'
+    downloadPath: '$(System.ArtifactsDirectory)'
+
 - task: NuGetCommand@2
   displayName: 'Pack with version'
   inputs:
@@ -72,14 +87,6 @@ steps:
   displayName: 'Feed'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: '6d6a8a4d-9d44-483d-8cbf-152ef325cb31/b847245d-760f-4d19-983c-4342e5809905'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.zip'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '6d6a8a4d-9d44-483d-8cbf-152ef325cb31/b847245d-760f-4d19-983c-4342e5809905'
-    allowPackageConflicts: true
