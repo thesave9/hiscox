@@ -21,7 +21,7 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
+  displayName: 'Install dependencies'
   inputs:
     command: 'restore'
     projects: '**/Demo.csproj'
@@ -35,7 +35,7 @@ steps:
 #    arguments: '--configuration $(BuildConfiguration)'
  
 - task: DotNetCoreCLI@2
-  displayName: build
+  displayName: 'Build Hiscox Azurefunctions code'
   inputs:
     projects: |
      **/Demo.csproj
@@ -43,7 +43,7 @@ steps:
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
+  displayName: 'Test Hiscox Azurefunctions code'
   inputs:
     command: 'test'
     projects: '**/*UnitTest*.csproj'
@@ -51,14 +51,14 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet publish'
+  displayName: 'Publish Hiscox Azurefunctions Artifacts'
   inputs:
     command: 'publish'
     publishWebProjects: true
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
 
 - task: NuGetCommand@2
-  displayName: 'Nuget pack'
+  displayName: 'Pack Hiscox Azurefunctions'
   inputs:
     command: 'pack'
     packagesToPack: '**/Demo.csproj'
@@ -66,7 +66,7 @@ steps:
 
 
 - task: NuGetCommand@2
-  displayName: 'Feed Nuget pack'
+  displayName: 'Push packed code to Azure Artifacts'
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
