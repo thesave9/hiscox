@@ -92,10 +92,3 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: '6d6a8a4d-9d44-483d-8cbf-152ef325cb31/b847245d-760f-4d19-983c-4342e5809905'
-
-- task: AzureFunctionApp@1 # Add this at the end of your file
-  inputs:
-    azureSubscription: 'Evaluación gratuita'
-    appType: functionAppLinux
-    appName: $(appName)
-    package: $(System.ArtifactsDirectory)/**/*.zip
