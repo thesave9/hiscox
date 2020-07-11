@@ -1,0 +1,94 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool: 'window-server'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  azureSubscription: 'Evaluación gratuita'
+  appName: 'demo-hiscox'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Installing Nuget tool'
+- task: NuGetCommand@2
+  displayName: 'Run Nuget Command'
+  inputs:
+    restoreSolution: '$(solution)'
+- task: DotNetCoreCLI@2
+  displayName: 'Install dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/Demo.csproj'
+    feedsToUse: 'select'
+
+#- task: DotNetCoreCLI@2
+#  displayName: 'dotnet build'
+#  inputs:
+#    command: 'build'
+#    projects: '**/Demo.csproj'
+#    arguments: '--configuration $(BuildConfiguration)'
+ 
+- task: DotNetCoreCLI@2
+  displayName: 'Build Hiscox Azurefunctions code'
+  inputs:
+    projects: |
+     **/Demo.csproj
+     !**/*SeleniumUiTests.csproj
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Test Hiscox Azurefunctions code'
+  inputs:
+    command: 'test'
+    projects: '**/*UnitTest*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Hiscox Azurefunctions Artifacts'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Pipeline Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Demo'
+    publishLocation: 'Container'
+
+- task: DownloadBuildArtifacts@0
+  displayName: 'Drop Artifacts'
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'Demo'
+    downloadPath: '$(System.ArtifactsDirectory)'
+
+- task: NuGetCommand@2
+  displayName: 'Pack with version'
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/Demo.csproj'
+    versioningScheme: 'byPrereleaseNumber'
+    majorVersion: '1'
+    minorVersion: '0'
+    patchVersion: '0'
+
+- task: NuGetCommand@2
+  displayName: 'Feed'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '6d6a8a4d-9d44-483d-8cbf-152ef325cb31/b847245d-760f-4d19-983c-4342e5809905'
