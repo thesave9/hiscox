@@ -1,0 +1,95 @@
+parameters:
+- name: branch
+  displayName: Branch Name
+  type: string
+  default: develop
+  values:
+   - develop
+   - feature-devops
+
+pr:
+  branches:
+    include:
+    - features/*
+  paths:
+    exclude:
+    - README.md
+
+
+trigger:
+  branches:
+    include:
+    - feature-devops
+
+pool:
+  vmpool: 'Azure Pipelines'
+  vmimage: 'windows-latest'
+
+
+variables:
+  solution: 'src/Hiscox.BaseCamp.ALL.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+jobs:
+- job: build
+  displayName: 'Basecamp API'
+
+  steps:
+  - checkout: git://Basecamp/Basecamp-API@${{ parameters.branch }}
+
+  - task: UseDotNet@2
+    displayName: 'Install dotnet sdk 3.x'
+    inputs:
+      packageType: sdk
+      version: 3.x
+  
+  - task: DotNetCoreCLI@2
+    displayName: 'Install dependencies'
+    inputs:
+      command: 'restore'
+      projects: '$(solution)'
+      feedsToUse: 'select'
+  
+  - task: DotNetCoreCLI@2
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      projects: '$(solution)'
+      arguments: '--configuration $(BuildConfiguration)'
+  
+  
+  - task: DotNetCoreCLI@2
+    displayName: 'Test'
+    inputs:
+      command: 'test'
+      projects: '**/*UnitTest*.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+  
+  
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack'
+    inputs:
+      command: 'pack'
+      packagesToPack: '$(solution)'
+      versioningScheme: 'byPrereleaseNumber'
+      majorVersion: '1'
+      minorVersion: '0'
+      patchVersion: '0'
+  
+  
+  - task: PublishBuildArtifacts@1
+    displayName: 'Pipeline Artifact'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'Basecamp-API'
+      publishLocation: 'Container'
+  
+  
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Drop Artifacts'
+    inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'Basecamp-API'
+      downloadPath: '$(System.ArtifactsDirectory)'	
